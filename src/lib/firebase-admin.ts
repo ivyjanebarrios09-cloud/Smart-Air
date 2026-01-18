@@ -5,9 +5,16 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
   : undefined;
 
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+  if (serviceAccount) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  } else {
+    // When running locally, initializing without credentials will still work for some features.
+    // In a deployed environment, Application Default Credentials should be available.
+    console.log("Initializing Firebase Admin SDK without explicit credentials.");
+    admin.initializeApp();
+  }
 }
 
 export const auth = admin.auth();

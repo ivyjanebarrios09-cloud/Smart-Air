@@ -138,7 +138,7 @@ export function HistoryView() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Time</TableHead>
+                    <TableHead>Timestamp</TableHead>
                     <TableHead className="text-right">Temp (°C)</TableHead>
                     <TableHead className="text-right">Humidity (%)</TableHead>
                     <TableHead className="text-right">PM2.5 (µg/m³)</TableHead>
@@ -154,7 +154,7 @@ export function HistoryView() {
                           {reading.timestamp &&
                             format(
                               (reading.timestamp as Timestamp).toDate(),
-                              "HH:mm:ss"
+                              "MMMM d, yyyy 'at' pp"
                             )}
                         </TableCell>
                         <TableCell className="text-right">

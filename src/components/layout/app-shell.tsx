@@ -45,10 +45,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar className="border-r">
           <SidebarContent>
             <SidebarHeader>
-              <div className="flex items-center gap-2">
-                <Image src="/image/logo.png" alt="Smart Air Logo" width={32} height={32} />
-                <span className="text-xl font-bold">Smart Air</span>
-              </div>
+              {/* The logo is now in the main header */}
             </SidebarHeader>
             <SidebarNav />
           </SidebarContent>

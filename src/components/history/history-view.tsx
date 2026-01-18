@@ -6,7 +6,7 @@ import { Calendar as CalendarIcon, Thermometer, Droplets, Cloud, Wind } from "lu
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
@@ -87,10 +87,10 @@ function SensorChart({ data, sensorType }: { data: SensorReading[], sensorType: 
 }
 
 const sensorTabs: { type: SensorType, label: string, icon: React.ReactNode }[] = [
-    { type: 'temperature', label: 'Temperature', icon: <Thermometer className="mr-2 h-4 w-4" /> },
-    { type: 'humidity', label: 'Humidity', icon: <Droplets className="mr-2 h-4 w-4" /> },
-    { type: 'pm2_5', label: 'PM2.5', icon: <Cloud className="mr-2 h-4 w-4" /> },
-    { type: 'co2', label: 'CO2', icon: <Wind className="mr-2 h-4 w-4" /> },
+    { type: 'temperature', label: 'Temperature', icon: <Thermometer className="mr-2 h-4 w-4 text-chart-1" /> },
+    { type: 'humidity', label: 'Humidity', icon: <Droplets className="mr-2 h-4 w-4 text-chart-2" /> },
+    { type: 'pm2_5', label: 'PM2.5', icon: <Cloud className="mr-2 h-4 w-4 text-chart-3" /> },
+    { type: 'co2', label: 'CO2', icon: <Wind className="mr-2 h-4 w-4 text-chart-4" /> },
 ];
 
 export function HistoryView() {
@@ -182,7 +182,7 @@ export function HistoryView() {
       <Card>
         <CardHeader>
           <CardTitle>Sensor Data for {date ? format(date, "MMMM d, yyyy") : '...'}</CardTitle>
-          <CardDescription>Select a sensor to see its data throughout the day.</CardDescription>
+          <CardDescription>Tap on a sensor to see its data throughout the day.</CardDescription>
         </CardHeader>
         <CardContent>
           {historyLoading ? (
@@ -190,18 +190,21 @@ export function HistoryView() {
                <Skeleton className="h-full w-full" />
             </div>
           ) : (
-            <Tabs defaultValue="temperature">
-              <TabsList>
-                {sensorTabs.map(tab => (
-                   <TabsTrigger key={tab.type} value={tab.type}>{tab.icon}{tab.label}</TabsTrigger>
-                ))}
-              </TabsList>
+            <Accordion type="single" collapsible defaultValue="temperature" className="w-full">
               {sensorTabs.map(tab => (
-                  <TabsContent key={tab.type} value={tab.type}>
-                      <SensorChart data={historicalData} sensorType={tab.type} />
-                  </TabsContent>
+                <AccordionItem key={tab.type} value={tab.type}>
+                  <AccordionTrigger>
+                    <div className="flex items-center">
+                      {tab.icon}
+                      {tab.label}
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <SensorChart data={historicalData} sensorType={tab.type} />
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </Tabs>
+            </Accordion>
           )}
         </CardContent>
       </Card>

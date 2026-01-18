@@ -2,12 +2,17 @@
 import { collection, addDoc, serverTimestamp, type Firestore } from "firebase/firestore";
 import { toast } from "@/hooks/use-toast";
 import type { SensorReading } from './definitions';
+import { getOverallStatus } from "./air-quality";
 
-type NewReading = Omit<SensorReading, 'id' | 'timestamp'>;
+// Note: Omit air_quality, as it will be calculated.
+type NewReading = Omit<SensorReading, 'id' | 'timestamp' | 'air_quality'>;
 
 export const addSensorReading = (firestore: Firestore, reading: NewReading) => {
-    addDoc(collection(firestore, "sensor_history"), {
+    const overallStatus = getOverallStatus(reading);
+
+    return addDoc(collection(firestore, "sensor_history"), {
         ...reading,
+        air_quality: overallStatus,
         timestamp: serverTimestamp(),
     }).then(() => {
         toast({

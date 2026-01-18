@@ -7,6 +7,9 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 export const metadata: Metadata = {
   title: 'Smart Air',
   description: 'Monitor your air quality in real-time.',
+  icons: {
+    icon: '/image/favicon.ico',
+  },
 };
 
 export default function RootLayout({

@@ -36,6 +36,7 @@ import {
 } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OverallQualityCard } from "@/components/dashboard/overall-quality-card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function HistoryView() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -133,7 +134,7 @@ export function HistoryView() {
           {historyLoading ? (
             <Skeleton className="h-[400px] w-full" />
           ) : (
-            <div className="overflow-x-auto">
+            <ScrollArea className="h-[400px]">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -180,7 +181,7 @@ export function HistoryView() {
                   )}
                 </TableBody>
               </Table>
-            </div>
+            </ScrollArea>
           )}
         </CardContent>
       </Card>

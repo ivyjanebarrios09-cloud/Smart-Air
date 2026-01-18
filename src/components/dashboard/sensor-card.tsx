@@ -16,9 +16,9 @@ function getStatus(value: number, type: SensorType): AirQualityStatus {
     if (value <= 35.4) return "Moderate";
     return "Poor";
   }
-  if (type === "mq135") {
-    if (value <= 100) return "Good";
-    if (value <= 300) return "Moderate";
+  if (type === "co2") {
+    if (value <= 1000) return "Good";
+    if (value <= 2000) return "Moderate";
     return "Poor";
   }
   return "N/A";

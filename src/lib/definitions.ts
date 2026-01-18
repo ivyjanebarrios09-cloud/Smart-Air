@@ -1,17 +1,16 @@
 import type { User as FirebaseUser } from "firebase/auth";
+import type { Timestamp } from "firebase/firestore";
 
 export interface User extends FirebaseUser {}
 
 export type SensorReading = {
-  timestamp: number;
+  id?: string;
+  timestamp: Timestamp | number;
   temperature: number;
   humidity: number;
   pm25: number;
-  mq135: number;
-};
-
-export type LatestSensorReadings = Omit<SensorReading, 'timestamp'> & {
-    lastUpdated: number;
+  co2: number;
+  air_quality: string;
 };
 
 export type HistoricalData = {
@@ -21,4 +20,4 @@ export type HistoricalData = {
 
 export type AirQualityStatus = "Good" | "Moderate" | "Poor" | "N/A";
 
-export type SensorType = "temperature" | "humidity" | "pm25" | "mq135";
+export type SensorType = "temperature" | "humidity" | "pm25" | "co2";

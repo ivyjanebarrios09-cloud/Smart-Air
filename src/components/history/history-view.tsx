@@ -30,16 +30,16 @@ const chartConfig: ChartConfig = {
     label: "PM2.5 (µg/m³)",
     color: "hsl(var(--chart-3))",
   },
-  mq135: {
-    label: "MQ135 (ppm)",
+  co2: {
+    label: "CO2 (ppm)",
     color: "hsl(var(--chart-4))",
   },
 } satisfies ChartConfig;
 
 function SensorChart({ data, sensorType }: { data: SensorReading[], sensorType: SensorType }) {
   const chartData = data.map(d => ({
-    time: format(d.timestamp, "HH:mm"),
-    [sensorType]: d[sensorType],
+    time: format(d.timestamp as number, "HH:mm"),
+    [sensorType]: (d as any)[sensorType],
   }));
 
   const config = { [sensorType]: chartConfig[sensorType] } as ChartConfig;
@@ -78,7 +78,7 @@ const sensorTabs: { type: SensorType, label: string, icon: React.ReactNode }[] =
     { type: 'temperature', label: 'Temperature', icon: <Thermometer className="mr-2 h-4 w-4" /> },
     { type: 'humidity', label: 'Humidity', icon: <Droplets className="mr-2 h-4 w-4" /> },
     { type: 'pm25', label: 'PM2.5', icon: <Cloud className="mr-2 h-4 w-4" /> },
-    { type: 'mq135', label: 'MQ135', icon: <Wind className="mr-2 h-4 w-4" /> },
+    { type: 'co2', label: 'CO2', icon: <Wind className="mr-2 h-4 w-4" /> },
 ];
 
 export function HistoryView() {

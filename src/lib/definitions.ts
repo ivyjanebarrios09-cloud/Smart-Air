@@ -8,7 +8,7 @@ export type SensorReading = {
   timestamp: Timestamp | number;
   temperature: number;
   humidity: number;
-  pm25: number;
+  pm2_5: number;
   co2: number;
   air_quality: string;
 };

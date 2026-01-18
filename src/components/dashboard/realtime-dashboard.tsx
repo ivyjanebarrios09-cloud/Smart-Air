@@ -34,7 +34,7 @@ export function RealtimeDashboard() {
   );
 
   const pm25Readings = useMemo(
-    () => dailyReadings.map((r) => r.pm25),
+    () => dailyReadings.map((r) => r.pm2_5),
     [dailyReadings]
   );
   const co2Readings = useMemo(
@@ -84,7 +84,7 @@ export function RealtimeDashboard() {
         />
         <SensorCard
           title="PM2.5"
-          value={reading.pm25}
+          value={reading.pm2_5}
           unit="µg/m³"
           icon={<Cloud className="h-6 w-6 text-muted-foreground" />}
           sensorType="pm25"

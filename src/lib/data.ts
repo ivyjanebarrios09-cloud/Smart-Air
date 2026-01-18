@@ -4,7 +4,7 @@ import type { SensorReading, HistoricalData } from "@/lib/definitions";
 const generateRandomReading = (base: any) => ({
     temperature: base.temperature + (Math.random() - 0.5) * 2,
     humidity: base.humidity + (Math.random() - 0.5) * 5,
-    pm25: base.pm25 + (Math.random() - 0.5) * 4,
+    pm2_5: base.pm2_5 + (Math.random() - 0.5) * 4,
     co2: base.co2 + (Math.random() - 0.5) * 50,
     air_quality: "Good",
 });
@@ -15,7 +15,7 @@ export const getMockHistoricalData = (date: string): HistoricalData => {
     const baseReadings = {
         temperature: 22,
         humidity: 50,
-        pm25: 15,
+        pm2_5: 15,
         co2: 600,
     };
 

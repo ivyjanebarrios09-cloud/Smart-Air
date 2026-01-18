@@ -39,7 +39,7 @@ const chartConfig: ChartConfig = {
 function SensorChart({ data, sensorType }: { data: SensorReading[], sensorType: SensorType }) {
   const chartData = data.map(d => ({
     time: format(d.timestamp as number, "HH:mm"),
-    [sensorType]: (d as any)[sensorType],
+    [sensorType]: sensorType === 'pm25' ? d.pm2_5 : (d as any)[sensorType],
   }));
 
   const config = { [sensorType]: chartConfig[sensorType] } as ChartConfig;

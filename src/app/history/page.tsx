@@ -1,19 +1,19 @@
 import AppShell from "@/components/layout/app-shell";
-import { RealtimeDashboard } from "@/components/dashboard/realtime-dashboard";
+import { HistoryView } from "@/components/history/history-view";
 
-export default function DashboardPage() {
+export default function HistoryPage() {
   return (
     <AppShell>
       <div className="flex flex-col gap-8">
         <header>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Dashboard
+            Historical Data
           </h1>
           <p className="text-muted-foreground">
-            Real-time sensor readings from your device.
+            Explore past sensor readings with interactive charts.
           </p>
         </header>
-        <RealtimeDashboard />
+        <HistoryView />
       </div>
     </AppShell>
   );

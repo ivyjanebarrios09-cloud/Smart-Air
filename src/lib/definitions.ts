@@ -20,4 +20,4 @@ export type HistoricalData = {
 
 export type AirQualityStatus = "Good" | "Moderate" | "Poor" | "N/A";
 
-export type SensorType = "temperature" | "humidity" | "pm25" | "co2";
+export type SensorType = "temperature" | "humidity" | "pm2_5" | "co2";

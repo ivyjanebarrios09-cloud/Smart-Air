@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { AirQualityStatus, SensorType } from "@/lib/definitions";
+import type { SensorType } from "@/lib/definitions";
+import { getIndividualStatus, sensorStatusColors } from "@/lib/air-quality";
 
 type SensorCardProps = {
   title: string;
@@ -10,29 +11,14 @@ type SensorCardProps = {
   sensorType: SensorType;
 };
 
-function getStatus(value: number, type: SensorType): AirQualityStatus {
-  if (type === "pm2_5") {
-    if (value <= 12) return "Good";
-    if (value <= 35.4) return "Moderate";
-    return "Poor";
-  }
-  if (type === "co2") {
-    if (value <= 1000) return "Good";
-    if (value <= 2000) return "Moderate";
-    return "Poor";
-  }
-  return "N/A";
-}
-
-const statusColors: Record<AirQualityStatus, string> = {
-  Good: "bg-green-500",
-  Moderate: "bg-yellow-500",
-  Poor: "bg-red-500",
-  "N/A": "bg-gray-400",
-};
-
-export function SensorCard({ title, value, unit, icon, sensorType }: SensorCardProps) {
-  const status = getStatus(value, sensorType);
+export function SensorCard({
+  title,
+  value,
+  unit,
+  icon,
+  sensorType,
+}: SensorCardProps) {
+  const status = getIndividualStatus(value, sensorType);
 
   return (
     <Card>
@@ -46,7 +32,12 @@ export function SensorCard({ title, value, unit, icon, sensorType }: SensorCardP
         </div>
         {status !== "N/A" && (
           <div className="mt-2 flex items-center text-xs text-muted-foreground">
-            <span className={cn("mr-2 h-2 w-2 rounded-full", statusColors[status])} />
+            <span
+              className={cn(
+                "mr-2 h-2 w-2 rounded-full",
+                sensorStatusColors[status]
+              )}
+            />
             <span>{status}</span>
           </div>
         )}

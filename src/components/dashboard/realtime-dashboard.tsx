@@ -3,12 +3,14 @@
 import { useMemo } from "react";
 import { SensorCard } from "@/components/dashboard/sensor-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Thermometer, Droplets, Cloud, Wind } from "lucide-react";
+import { Thermometer, Droplets, Cloud, Wind, Info } from "lucide-react";
 import { AiSummaryDialog } from "./ai-summary-dialog";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection, query, where, orderBy, limit } from "firebase/firestore";
 import type { SensorReading } from "@/lib/definitions";
 import { OverallQualityCard } from "./overall-quality-card";
+import { DataSimulator } from "./data-simulator";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export function RealtimeDashboard() {
   const firestore = useFirestore();
@@ -67,12 +69,25 @@ export function RealtimeDashboard() {
           <Skeleton className="h-36 w-full" />
           <Skeleton className="h-36 w-full" />
         </div>
+        <Skeleton className="h-48 w-full" />
       </div>
     );
   }
 
   if (!reading) {
-    return <div>No data available.</div>;
+    return (
+      <div className="space-y-6">
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>No Data Available</AlertTitle>
+          <AlertDescription>
+            There is no sensor data in the database. Use the simulator below to
+            generate and store some data.
+          </AlertDescription>
+        </Alert>
+        <DataSimulator />
+      </div>
+    );
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -119,6 +134,7 @@ export function RealtimeDashboard() {
           humidityReadings={humidityReadings}
         />
       </div>
+      <DataSimulator />
     </div>
   );
 }

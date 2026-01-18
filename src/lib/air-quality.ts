@@ -16,12 +16,12 @@ export const overallStatusConfig: Record<
     description: "One or more sensor readings are at a poor level.",
   },
   Moderate: {
-    className: "bg-yellow-500",
+    className: "bg-green-500",
     label: "MODERATE",
     description: "One or more sensor readings are at a moderate level.",
   },
   Good: {
-    className: "bg-green-500",
+    className: "bg-blue-500",
     label: "GOOD",
     description: "All sensor readings are at a good level.",
   },

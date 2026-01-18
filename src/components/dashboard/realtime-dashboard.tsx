@@ -10,7 +10,6 @@ import { collection, query, where, orderBy, limit } from "firebase/firestore";
 import type { SensorReading } from "@/lib/definitions";
 import { OverallQualityCard } from "./overall-quality-card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { DataSimulator } from "./data-simulator";
 
 export function RealtimeDashboard() {
   const firestore = useFirestore();
@@ -81,10 +80,9 @@ export function RealtimeDashboard() {
           <Info className="h-4 w-4" />
           <AlertTitle>No Data Available</AlertTitle>
           <AlertDescription>
-            There is no sensor data in the database. You can add some using the simulator below.
+            There is no sensor data in the database.
           </AlertDescription>
         </Alert>
-        <DataSimulator />
       </div>
     );
   }
@@ -133,7 +131,6 @@ export function RealtimeDashboard() {
           humidityReadings={humidityReadings}
         />
       </div>
-      <DataSimulator />
     </div>
   );
 }

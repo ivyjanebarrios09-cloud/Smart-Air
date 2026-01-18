@@ -13,6 +13,7 @@ import {
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -55,7 +56,7 @@ export function HistoryView() {
       collection(firestore, "sensor_history"),
       where("timestamp", ">=", startOfDay),
       where("timestamp", "<=", endOfDay),
-      orderBy("timestamp", "asc")
+      orderBy("timestamp", "desc")
     );
   }, [firestore, date]);
 
@@ -90,6 +91,15 @@ export function HistoryView() {
     };
   }, [historicalData]);
 
+  const sortedHistoricalDataForTable = useMemo(() => {
+    if (!historicalData) return [];
+    return [...historicalData].sort((a, b) => {
+      const tsA = (a.timestamp as Timestamp)?.toMillis() || 0;
+      const tsB = (b.timestamp as Timestamp)?.toMillis() || 0;
+      return tsA - tsB;
+    });
+  }, [historicalData]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -98,7 +108,7 @@ export function HistoryView() {
             <Button
               variant={"outline"}
               className={cn(
-                "w-[280px] justify-start text-left font-normal",
+                "w-full justify-start text-left font-normal md:w-[280px]",
                 !date && "text-muted-foreground"
               )}
             >
@@ -129,59 +139,127 @@ export function HistoryView() {
       <Card>
         <CardHeader>
           <CardTitle>Detailed Readings</CardTitle>
+          <CardDescription>
+            A log of all sensor readings for the selected day.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {historyLoading ? (
             <Skeleton className="h-[400px] w-full" />
           ) : (
-            <ScrollArea className="h-[400px]">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Timestamp</TableHead>
-                    <TableHead className="text-right">Temp (°C)</TableHead>
-                    <TableHead className="text-right">Humidity (%)</TableHead>
-                    <TableHead className="text-right">PM2.5 (µg/m³)</TableHead>
-                    <TableHead className="text-right">CO2 (ppm)</TableHead>
-                    <TableHead>Quality</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {historicalData.length > 0 ? (
-                    historicalData.map((reading) => (
-                      <TableRow key={reading.id}>
-                        <TableCell className="font-medium">
+            <>
+              {/* Mobile View */}
+              <div className="space-y-4 md:hidden">
+                {historicalData.length > 0 ? (
+                  historicalData.map((reading) => (
+                    <Card key={reading.id}>
+                      <CardHeader className="p-4">
+                        <CardTitle className="text-sm font-medium">
                           {reading.timestamp &&
                             format(
                               (reading.timestamp as Timestamp).toDate(),
-                              "MMMM d, yyyy 'at' pp"
+                              "pp"
                             )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {reading.temperature.toFixed(1)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {reading.humidity.toFixed(1)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {reading.pm2_5.toFixed(1)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {reading.co2.toFixed(1)}
-                        </TableCell>
-                        <TableCell>{reading.air_quality}</TableCell>
+                        </CardTitle>
+                        <CardDescription>
+                          {reading.air_quality}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="grid grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Temp</p>
+                          <p className="font-medium">
+                            {reading.temperature.toFixed(1)}°C
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Humidity</p>
+                          <p className="font-medium">
+                            {reading.humidity.toFixed(1)}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">PM2.5</p>
+                          <p className="font-medium">
+                            {reading.pm2_5.toFixed(1)} µg/m³
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">CO2</p>
+                          <p className="font-medium">
+                            {reading.co2.toFixed(1)} ppm
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="py-12 text-center text-muted-foreground">
+                    No data for this day.
+                  </div>
+                )}
+              </div>
+              {/* Desktop View */}
+              <div className="hidden md:block">
+                <ScrollArea className="h-[400px]">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Timestamp</TableHead>
+                        <TableHead className="text-right">
+                          Temp (°C)
+                        </TableHead>
+                        <TableHead className="text-right">
+                          Humidity (%)
+                        </TableHead>
+                        <TableHead className="text-right">
+                          PM2.5 (µg/m³)
+                        </TableHead>
+                        <TableHead className="text-right">CO2 (ppm)</TableHead>
+                        <TableHead>Quality</TableHead>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
-                        No data for this day.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </ScrollArea>
+                    </TableHeader>
+                    <TableBody>
+                      {sortedHistoricalDataForTable.length > 0 ? (
+                        sortedHistoricalDataForTable.map((reading) => (
+                          <TableRow key={reading.id}>
+                            <TableCell className="font-medium">
+                              {reading.timestamp &&
+                                format(
+                                  (reading.timestamp as Timestamp).toDate(),
+                                  "MMMM d, yyyy 'at' pp"
+                                )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {reading.temperature.toFixed(1)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {reading.humidity.toFixed(1)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {reading.pm2_5.toFixed(1)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {reading.co2.toFixed(1)}
+                            </TableCell>
+                            <TableCell>{reading.air_quality}</TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className="h-24 text-center"
+                          >
+                            No data for this day.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

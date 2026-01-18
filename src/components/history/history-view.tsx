@@ -2,95 +2,40 @@
 
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Thermometer, Droplets, Cloud, Wind } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import type { SensorReading, SensorType } from "@/lib/definitions";
+import type { SensorReading } from "@/lib/definitions";
 import { useCollection, useFirestore } from "@/firebase";
-import { collection, query, where, orderBy, type Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  type Timestamp,
+} from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OverallQualityCard } from "@/components/dashboard/overall-quality-card";
-
-const chartConfig: ChartConfig = {
-  value: {
-    label: "Value",
-  },
-  temperature: {
-    label: "Temp (°C)",
-    color: "hsl(var(--chart-1))",
-  },
-  humidity: {
-    label: "Humidity (%)",
-    color: "hsl(var(--chart-2))",
-  },
-  pm2_5: {
-    label: "PM2.5 (µg/m³)",
-    color: "hsl(var(--chart-3))",
-  },
-  co2: {
-    label: "CO2 (ppm)",
-    color: "hsl(var(--chart-4))",
-  },
-} satisfies ChartConfig;
-
-function SensorChart({ data, sensorType }: { data: SensorReading[], sensorType: SensorType }) {
-  const chartData = useMemo(() => data.map(d => {
-    const timestamp = d.timestamp && typeof (d.timestamp as any).toDate === 'function' 
-      ? (d.timestamp as Timestamp).toDate() 
-      : new Date(d.timestamp as number);
-    return {
-      time: format(timestamp, "HH:mm"),
-      [sensorType]: d[sensorType],
-    }
-  }), [data, sensorType]);
-
-  const config = { [sensorType]: chartConfig[sensorType] } as ChartConfig;
-
-  if (!chartData || chartData.length === 0) {
-    return <div className="flex h-[300px] items-center justify-center text-muted-foreground">No data for this day.</div>;
-  }
-
-  return (
-    <ChartContainer config={config} className="min-h-[300px] w-full">
-      <LineChart data={chartData} margin={{ left: 12, right: 12 }}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="time"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-          tickCount={8}
-        />
-        <YAxis
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-          domain={['dataMin - 5', 'dataMax + 5']}
-        />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-        <Line
-          dataKey={sensorType}
-          type="monotone"
-          stroke={`var(--color-${sensorType})`}
-          strokeWidth={2}
-          dot={false}
-        />
-      </LineChart>
-    </ChartContainer>
-  );
-}
-
-const sensorTabs: { type: SensorType, label: string, icon: React.ReactNode }[] = [
-    { type: 'temperature', label: 'Temperature', icon: <Thermometer className="h-5 w-5 text-chart-1" /> },
-    { type: 'humidity', label: 'Humidity', icon: <Droplets className="h-5 w-5 text-chart-2" /> },
-    { type: 'pm2_5', label: 'PM2.5', icon: <Cloud className="h-5 w-5 text-chart-3" /> },
-    { type: 'co2', label: 'CO2', icon: <Wind className="h-5 w-5 text-chart-4" /> },
-];
 
 export function HistoryView() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -113,7 +58,8 @@ export function HistoryView() {
     );
   }, [firestore, date]);
 
-  const { data: historicalData, loading: historyLoading } = useCollection<SensorReading>(historicalDataQuery);
+  const { data: historicalData, loading: historyLoading } =
+    useCollection<SensorReading>(historicalDataQuery);
 
   const dailyAverageReading = useMemo(() => {
     if (!historicalData || historicalData.length === 0) {
@@ -143,7 +89,6 @@ export function HistoryView() {
     };
   }, [historicalData]);
 
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -171,46 +116,74 @@ export function HistoryView() {
           </PopoverContent>
         </Popover>
       </div>
-      
+
       {historyLoading ? (
         <Skeleton className="h-32 w-full" />
       ) : (
-        dailyAverageReading && <OverallQualityCard reading={dailyAverageReading as SensorReading} />
+        dailyAverageReading && (
+          <OverallQualityCard reading={dailyAverageReading as SensorReading} />
+        )
       )}
 
-      {historyLoading ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {sensorTabs.map((tab) => (
-            <Card key={tab.type}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Skeleton className="h-6 w-5" />
-                  <Skeleton className="h-6 w-24" />
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-[300px] w-full" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {sensorTabs.map((tab) => (
-            <Card key={tab.type}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  {tab.icon}
-                  {tab.label}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <SensorChart data={historicalData} sensorType={tab.type} />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Detailed Readings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {historyLoading ? (
+            <Skeleton className="h-[400px] w-full" />
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Time</TableHead>
+                    <TableHead className="text-right">Temp (°C)</TableHead>
+                    <TableHead className="text-right">Humidity (%)</TableHead>
+                    <TableHead className="text-right">PM2.5 (µg/m³)</TableHead>
+                    <TableHead className="text-right">CO2 (ppm)</TableHead>
+                    <TableHead>Quality</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {historicalData.length > 0 ? (
+                    historicalData.map((reading) => (
+                      <TableRow key={reading.id}>
+                        <TableCell className="font-medium">
+                          {reading.timestamp &&
+                            format(
+                              (reading.timestamp as Timestamp).toDate(),
+                              "HH:mm:ss"
+                            )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {reading.temperature.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {reading.humidity.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {reading.pm2_5.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {reading.co2.toFixed(1)}
+                        </TableCell>
+                        <TableCell>{reading.air_quality}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        No data for this day.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,19 +1,20 @@
 "use client";
 
-import { useAuth } from "@/hooks/use-auth";
+import { useUser, useAuth } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { SidebarProvider, Sidebar, SidebarInset, SidebarTrigger, SidebarContent, SidebarHeader, SidebarFooter } from "@/components/ui/sidebar";
+import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter } from "@/components/ui/sidebar";
 import { Header } from "@/components/layout/header";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import { LogOut, Loader2 } from "lucide-react";
-import { logoutUser } from "@/app/actions";
 import { Logo } from "../icons/logo";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { signOut } from "firebase/auth";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading } = useUser();
+  const auth = useAuth();
   const router = useRouter();
   const isMobile = useIsMobile();
 
@@ -24,9 +25,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [user, loading, router]);
 
   const handleLogout = async () => {
-    await logoutUser();
-    router.push("/login");
-    router.refresh();
+    if (auth) {
+      await signOut(auth);
+    }
   };
 
   if (loading || !user) {

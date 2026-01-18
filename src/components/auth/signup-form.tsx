@@ -17,7 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { signupUser } from "@/app/actions";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "@/firebase";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -26,6 +27,7 @@ const formSchema = z.object({
 
 export function SignupForm() {
   const router = useRouter();
+  const auth = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,19 +41,23 @@ export function SignupForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const result = await signupUser(values);
-    
-    if (result.success) {
+    if (!auth) {
+        toast({ variant: "destructive", title: "Auth not initialized" });
+        setIsLoading(false);
+        return;
+    }
+    try {
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: "Account Created",
         description: "Welcome! You can now sign in.",
       });
       router.push("/login");
-    } else {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: result.error || "An unknown error occurred.",
+        description: "Email may already be in use.",
       });
       setIsLoading(false);
     }

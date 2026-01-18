@@ -1,16 +1,18 @@
 import admin from "firebase-admin";
 
-const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
-  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
-  : undefined;
-
 if (!admin.apps.length) {
-  if (serviceAccount) {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
+  const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (serviceAccountKey) {
+    try {
+      const serviceAccount = JSON.parse(serviceAccountKey);
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    } catch (error) {
+      console.error("Error parsing FIREBASE_SERVICE_ACCOUNT_KEY, falling back to default initialization:", error);
+      admin.initializeApp();
+    }
   } else {
-    // When running locally, initializing without credentials will still work for some features.
     // In a deployed environment, Application Default Credentials should be available.
     console.log("Initializing Firebase Admin SDK without explicit credentials.");
     admin.initializeApp();

@@ -2,13 +2,13 @@
 
 import { useMemo } from "react";
 import { SensorCard } from "@/components/dashboard/sensor-card";
-import { getMockHistoricalData } from "@/lib/data";
-import type { SensorReading } from "@/lib/definitions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Thermometer, Droplets, Cloud, Wind } from "lucide-react";
 import { AiSummaryDialog } from "./ai-summary-dialog";
 import { useCollection, useFirestore } from "@/firebase";
-import { collection, query, orderBy, limit } from "firebase/firestore";
+import { collection, query, where, orderBy, limit } from "firebase/firestore";
+import type { SensorReading } from "@/lib/definitions";
+import { OverallQualityCard } from "./overall-quality-card";
 
 export function RealtimeDashboard() {
   const firestore = useFirestore();
@@ -27,13 +27,20 @@ export function RealtimeDashboard() {
 
   const reading = useMemo(() => readingsData?.[0], [readingsData]);
 
-  const today = new Date().toISOString().split("T")[0];
-  const dailyReadings = useMemo(
-    () => getMockHistoricalData(today).readings,
-    [today]
-  );
+  const dailyQuery = useMemo(() => {
+    if (!firestore) return null;
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    return query(
+      collection(firestore, "sensor_history"),
+      where("timestamp", ">=", startOfDay),
+      orderBy("timestamp", "asc")
+    );
+  }, [firestore]);
 
-  const pm25Readings = useMemo(
+  const { data: dailyReadings } = useCollection<SensorReading>(dailyQuery);
+
+  const pm2_5Readings = useMemo(
     () => dailyReadings.map((r) => r.pm2_5),
     [dailyReadings]
   );
@@ -52,11 +59,14 @@ export function RealtimeDashboard() {
 
   if (readingsLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Skeleton className="h-36 w-full" />
-        <Skeleton className="h-36 w-full" />
-        <Skeleton className="h-36 w-full" />
-        <Skeleton className="h-36 w-full" />
+      <div className="space-y-6">
+        <Skeleton className="h-32 w-full" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+        </div>
       </div>
     );
   }
@@ -65,8 +75,11 @@ export function RealtimeDashboard() {
     return <div>No data available.</div>;
   }
 
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="space-y-6">
+      <OverallQualityCard reading={reading} />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SensorCard
           title="Temperature"
@@ -87,7 +100,7 @@ export function RealtimeDashboard() {
           value={reading.pm2_5}
           unit="µg/m³"
           icon={<Cloud className="h-6 w-6 text-muted-foreground" />}
-          sensorType="pm25"
+          sensorType="pm2_5"
         />
         <SensorCard
           title="CO2"
@@ -100,7 +113,7 @@ export function RealtimeDashboard() {
       <div className="flex justify-start">
         <AiSummaryDialog
           date={today}
-          pm25Readings={pm25Readings}
+          pm25Readings={pm2_5Readings}
           co2Readings={co2Readings}
           temperatureReadings={temperatureReadings}
           humidityReadings={humidityReadings}

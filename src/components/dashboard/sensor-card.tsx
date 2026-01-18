@@ -11,7 +11,7 @@ type SensorCardProps = {
 };
 
 function getStatus(value: number, type: SensorType): AirQualityStatus {
-  if (type === "pm25") {
+  if (type === "pm2_5") {
     if (value <= 12) return "Good";
     if (value <= 35.4) return "Moderate";
     return "Poor";

@@ -39,8 +39,8 @@ export function getIndividualStatus(
   type: SensorType
 ): AirQualityStatus {
   if (type === "pm2_5") {
-    if (value <= 12) return "Good";
-    if (value <= 35.4) return "Moderate";
+    if (value <= 35) return "Good";
+    if (value <= 75) return "Moderate";
     return "Poor";
   }
   if (type === "co2") {

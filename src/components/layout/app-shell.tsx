@@ -11,6 +11,7 @@ import { LogOut, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { signOut } from "firebase/auth";
+import { BottomNav } from "./bottom-nav";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useUser();
@@ -60,10 +61,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </Sidebar>
         <div className="flex flex-1 flex-col">
           <Header />
-          <main className="flex-1 p-4 md:p-6 lg:p-8">
+          <main className="flex-1 p-4 md:p-6 lg:p-8 pb-20 md:pb-6">
             {children}
           </main>
         </div>
+        {isMobile && <BottomNav />}
       </div>
     </SidebarProvider>
   );

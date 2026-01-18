@@ -1,5 +1,6 @@
 import AppShell from "@/components/layout/app-shell";
 import { RealtimeDashboard } from "@/components/dashboard/realtime-dashboard";
+import { DataSimulator } from "@/components/dashboard/data-simulator";
 
 export default function DashboardPage() {
   return (
@@ -14,6 +15,7 @@ export default function DashboardPage() {
           </p>
         </header>
         <RealtimeDashboard />
+        <DataSimulator />
       </div>
     </AppShell>
   );

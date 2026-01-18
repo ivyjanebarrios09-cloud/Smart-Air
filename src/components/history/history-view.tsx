@@ -149,55 +149,59 @@ export function HistoryView() {
           ) : (
             <>
               {/* Mobile View */}
-              <div className="space-y-4 md:hidden">
-                {historicalData.length > 0 ? (
-                  historicalData.map((reading) => (
-                    <Card key={reading.id}>
-                      <CardHeader className="p-4">
-                        <CardTitle className="text-sm font-medium">
-                          {reading.timestamp &&
-                            format(
-                              (reading.timestamp as Timestamp).toDate(),
-                              "pp"
-                            )}
-                        </CardTitle>
-                        <CardDescription>
-                          {reading.air_quality}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="grid grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Temp</p>
-                          <p className="font-medium">
-                            {reading.temperature.toFixed(1)}°C
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Humidity</p>
-                          <p className="font-medium">
-                            {reading.humidity.toFixed(1)}%
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">PM2.5</p>
-                          <p className="font-medium">
-                            {reading.pm2_5.toFixed(1)} µg/m³
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">CO2</p>
-                          <p className="font-medium">
-                            {reading.co2.toFixed(1)} ppm
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <div className="py-12 text-center text-muted-foreground">
-                    No data for this day.
+              <div className="md:hidden">
+                <ScrollArea className="h-[400px]">
+                  <div className="space-y-4 pr-4">
+                    {historicalData.length > 0 ? (
+                      historicalData.map((reading) => (
+                        <Card key={reading.id}>
+                          <CardHeader className="p-4">
+                            <CardTitle className="text-sm font-medium">
+                              {reading.timestamp &&
+                                format(
+                                  (reading.timestamp as Timestamp).toDate(),
+                                  "pp"
+                                )}
+                            </CardTitle>
+                            <CardDescription>
+                              {reading.air_quality}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="grid grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0 text-sm">
+                            <div>
+                              <p className="text-muted-foreground">Temp</p>
+                              <p className="font-medium">
+                                {reading.temperature.toFixed(1)}°C
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground">Humidity</p>
+                              <p className="font-medium">
+                                {reading.humidity.toFixed(1)}%
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground">PM2.5</p>
+                              <p className="font-medium">
+                                {reading.pm2_5.toFixed(1)} µg/m³
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground">CO2</p>
+                              <p className="font-medium">
+                                {reading.co2.toFixed(1)} ppm
+                              </p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    ) : (
+                      <div className="py-12 text-center text-muted-foreground">
+                        No data for this day.
+                      </div>
+                    )}
                   </div>
-                )}
+                </ScrollArea>
               </div>
               {/* Desktop View */}
               <div className="hidden md:block">

@@ -44,8 +44,8 @@ export function getIndividualStatus(
     return "Poor";
   }
   if (type === "co2") {
-    if (value <= 1000) return "Good";
-    if (value <= 2000) return "Moderate";
+    if (value <= 600) return "Good";
+    if (value <= 800) return "Moderate";
     return "Poor";
   }
   return "N/A";

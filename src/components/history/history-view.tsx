@@ -6,14 +6,13 @@ import { Calendar as CalendarIcon, Thermometer, Droplets, Cloud, Wind } from "lu
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import type { SensorReading, SensorType } from "@/lib/definitions";
 import { useCollection, useFirestore } from "@/firebase";
-import { collection, query, where, orderBy, type Timestamp, type Query } from "firebase/firestore";
+import { collection, query, where, orderBy, type Timestamp } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OverallQualityCard } from "@/components/dashboard/overall-quality-card";
 
@@ -87,10 +86,10 @@ function SensorChart({ data, sensorType }: { data: SensorReading[], sensorType: 
 }
 
 const sensorTabs: { type: SensorType, label: string, icon: React.ReactNode }[] = [
-    { type: 'temperature', label: 'Temperature', icon: <Thermometer className="mr-2 h-4 w-4 text-chart-1" /> },
-    { type: 'humidity', label: 'Humidity', icon: <Droplets className="mr-2 h-4 w-4 text-chart-2" /> },
-    { type: 'pm2_5', label: 'PM2.5', icon: <Cloud className="mr-2 h-4 w-4 text-chart-3" /> },
-    { type: 'co2', label: 'CO2', icon: <Wind className="mr-2 h-4 w-4 text-chart-4" /> },
+    { type: 'temperature', label: 'Temperature', icon: <Thermometer className="h-5 w-5 text-chart-1" /> },
+    { type: 'humidity', label: 'Humidity', icon: <Droplets className="h-5 w-5 text-chart-2" /> },
+    { type: 'pm2_5', label: 'PM2.5', icon: <Cloud className="h-5 w-5 text-chart-3" /> },
+    { type: 'co2', label: 'CO2', icon: <Wind className="h-5 w-5 text-chart-4" /> },
 ];
 
 export function HistoryView() {
@@ -179,35 +178,39 @@ export function HistoryView() {
         dailyAverageReading && <OverallQualityCard reading={dailyAverageReading as SensorReading} />
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Sensor Data for {date ? format(date, "MMMM d, yyyy") : '...'}</CardTitle>
-          <CardDescription>Tap on a sensor to see its data throughout the day.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {historyLoading ? (
-            <div className="flex h-[300px] items-center justify-center">
-               <Skeleton className="h-full w-full" />
-            </div>
-          ) : (
-            <Accordion type="single" collapsible defaultValue="temperature" className="w-full">
-              {sensorTabs.map(tab => (
-                <AccordionItem key={tab.type} value={tab.type}>
-                  <AccordionTrigger>
-                    <div className="flex items-center">
-                      {tab.icon}
-                      {tab.label}
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <SensorChart data={historicalData} sensorType={tab.type} />
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          )}
-        </CardContent>
-      </Card>
+      {historyLoading ? (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {sensorTabs.map((tab) => (
+            <Card key={tab.type}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-5" />
+                  <Skeleton className="h-6 w-24" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-[300px] w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {sensorTabs.map((tab) => (
+            <Card key={tab.type}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  {tab.icon}
+                  {tab.label}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SensorChart data={historicalData} sensorType={tab.type} />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

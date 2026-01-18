@@ -1,5 +1,5 @@
 import { SignupForm } from '@/components/auth/signup-form';
-import { Logo } from '@/components/icons/logo';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function SignupPage() {
@@ -7,7 +7,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
-          <Logo className="h-12 w-12 text-primary" />
+          <Image src="/image/logo.png" alt="Smart Air Logo" width={48} height={48} />
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
             Create an Account
           </h1>

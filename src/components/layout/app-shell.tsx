@@ -8,7 +8,7 @@ import { Header } from "@/components/layout/header";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import { LogOut, Loader2 } from "lucide-react";
-import { Logo } from "../icons/logo";
+import Image from "next/image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { signOut } from "firebase/auth";
 
@@ -45,7 +45,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <SidebarContent>
             <SidebarHeader>
               <div className="flex items-center gap-2">
-                <Logo className="h-8 w-8 text-primary" />
+                <Image src="/image/logo.png" alt="Smart Air Logo" width={32} height={32} />
                 <span className="text-xl font-bold">Smart Air</span>
               </div>
             </SidebarHeader>

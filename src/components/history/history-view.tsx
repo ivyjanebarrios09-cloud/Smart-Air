@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function HistoryView() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [isMounted, setIsMounted] = useState(false);
   const firestore = useFirestore();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const historicalDataQuery = useMemo(() => {
     if (!firestore || !date) return null;
@@ -93,7 +98,7 @@ export function HistoryView() {
               selected={date}
               onSelect={setDate}
               initialFocus
-              disabled={(d) => d > new Date() || d < new Date("2024-01-01")}
+              disabled={isMounted ? (d) => d > new Date() || d < new Date("2024-01-01") : () => true}
             />
           </PopoverContent>
         </Popover>

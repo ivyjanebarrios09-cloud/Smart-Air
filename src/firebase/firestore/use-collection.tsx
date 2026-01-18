@@ -12,7 +12,7 @@ import {
 import { useFirestore } from "@/firebase";
 
 export function useCollection<T extends DocumentData>(
-  ref: CollectionReference<T> | Query<T> | string
+  ref: CollectionReference<T> | Query<T> | string | null
 ) {
   const firestore = useFirestore();
   const [data, setData] = useState<T[]>([]);
@@ -21,6 +21,7 @@ export function useCollection<T extends DocumentData>(
 
   const collectionQuery = useMemo(() => {
     if (!firestore) return null;
+    if (!ref) return null;
     return typeof ref === "string" ? collection(firestore, ref) : ref;
   }, [firestore, ref]);
 

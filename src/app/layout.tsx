@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Air Insights',
+  title: 'Smart Air',
   description: 'Monitor your air quality in real-time.',
 };
 

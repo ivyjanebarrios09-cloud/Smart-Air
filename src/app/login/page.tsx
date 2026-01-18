@@ -9,7 +9,7 @@ export default function LoginPage() {
         <div className="mb-8 flex flex-col items-center">
           <Logo className="h-12 w-12 text-primary" />
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
-            Welcome to Air Insights
+            Welcome to Smart Air
           </h1>
           <p className="text-muted-foreground">Sign in to monitor your environment</p>
         </div>

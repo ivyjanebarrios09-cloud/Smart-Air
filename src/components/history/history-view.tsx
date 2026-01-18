@@ -15,6 +15,7 @@ import type { SensorReading, SensorType } from "@/lib/definitions";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection, query, where, orderBy, type Timestamp, type Query } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OverallQualityCard } from "@/components/dashboard/overall-quality-card";
 
 const chartConfig: ChartConfig = {
   value: {
@@ -115,6 +116,35 @@ export function HistoryView() {
 
   const { data: historicalData, loading: historyLoading } = useCollection<SensorReading>(historicalDataQuery);
 
+  const dailyAverageReading = useMemo(() => {
+    if (!historicalData || historicalData.length === 0) {
+      return null;
+    }
+
+    const totalReadings = historicalData.reduce(
+      (acc, reading) => {
+        acc.pm2_5 += reading.pm2_5;
+        acc.co2 += reading.co2;
+        acc.temperature += reading.temperature;
+        acc.humidity += reading.humidity;
+        return acc;
+      },
+      { pm2_5: 0, co2: 0, temperature: 0, humidity: 0 }
+    );
+
+    const count = historicalData.length;
+
+    return {
+      pm2_5: totalReadings.pm2_5 / count,
+      co2: totalReadings.co2 / count,
+      temperature: totalReadings.temperature / count,
+      humidity: totalReadings.humidity / count,
+      timestamp: historicalData[0].timestamp,
+      air_quality: "",
+    };
+  }, [historicalData]);
+
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -142,6 +172,12 @@ export function HistoryView() {
           </PopoverContent>
         </Popover>
       </div>
+      
+      {historyLoading ? (
+        <Skeleton className="h-32 w-full" />
+      ) : (
+        dailyAverageReading && <OverallQualityCard reading={dailyAverageReading as SensorReading} />
+      )}
 
       <Card>
         <CardHeader>

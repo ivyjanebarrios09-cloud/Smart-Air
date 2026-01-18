@@ -97,28 +97,28 @@ export function RealtimeDashboard() {
           title="Temperature"
           value={reading.temperature}
           unit="°C"
-          icon={<Thermometer className="h-6 w-6 text-muted-foreground" />}
+          icon={<Thermometer className="h-6 w-6 text-chart-1" />}
           sensorType="temperature"
         />
         <SensorCard
           title="Humidity"
           value={reading.humidity}
           unit="%"
-          icon={<Droplets className="h-6 w-6 text-muted-foreground" />}
+          icon={<Droplets className="h-6 w-6 text-chart-2" />}
           sensorType="humidity"
         />
         <SensorCard
           title="PM2.5"
           value={reading.pm2_5}
           unit="µg/m³"
-          icon={<Cloud className="h-6 w-6 text-muted-foreground" />}
+          icon={<Cloud className="h-6 w-6 text-chart-3" />}
           sensorType="pm2_5"
         />
         <SensorCard
           title="CO2"
           value={reading.co2}
           unit="ppm"
-          icon={<Wind className="h-6 w-6 text-muted-foreground" />}
+          icon={<Wind className="h-6 w-6 text-chart-4" />}
           sensorType="co2"
         />
       </div>
